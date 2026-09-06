@@ -1,0 +1,217 @@
+@font-face {
+  font-family: 'DOS';
+  src: url('./assets/fonts/gopnik-cp866.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+:root {
+  --c0:  #000000; --c1:  #0000aa; --c2:  #00aa00; --c3:  #00aaaa;
+  --c4:  #aa0000; --c5:  #aa00aa; --c6:  #aa5500; --c7:  #aaaaaa;
+  --c8:  #555555; --c9:  #5555ff; --c10: #55ff55; --c11: #55ffff;
+  --c12: #ff5555; --c13: #ff55ff; --c14: #ffff55; --c15: #ffffff;
+  /* The 8x16 DOS cell, at whatever size the view settled on. */
+  --cell-w: 8px;
+  --cell-h: 16px;
+  --font: 16px;
+  /* How much of its 80 columns a drawn screen has room for. */
+  --art-scale: 1;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: #000;
+  color: var(--c7);
+  font-family: 'DOS', 'Courier New', monospace;
+  overflow: hidden;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#app {
+  /* Sized in JS from visualViewport where there is one, so the on-screen
+     keyboard takes room off the screen instead of covering the command bar. */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  overflow: hidden;
+}
+
+.stage {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.screen {
+  /* Width and height are whole cells, both set by fit() in main.ts. */
+  font-size: var(--font);
+  line-height: var(--cell-h);
+  background: #000;
+  color: var(--c15);
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  /* The whole of the layout. `pre-wrap` keeps the author's spacing - the
+     padding he centred lines with, the runs of spaces his columns are made of -
+     and still wraps, on a word, and between ideographs under the language's own
+     rules. `break-word` only ever splits a word with nowhere else to go. */
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  line-break: strict;
+  cursor: text;
+  contain: content;
+}
+.screen::-webkit-scrollbar { display: none; }
+
+/* One line the game printed, however many rows the browser draws it in. */
+.line { min-height: var(--cell-h); }
+
+/* A drawn screen is not reflowed: it keeps its 80 columns and is scaled to the
+   width there is. The transform does not move layout, so the line is given the
+   height the scaled row actually takes. */
+.line.art {
+  white-space: pre;
+  min-height: 0;
+  transform: scale(var(--art-scale));
+  transform-origin: 0 0;
+  height: calc(var(--cell-h) * var(--art-scale));
+}
+
+/* The DOS face is an 8x16 code page, so it has no ideographs and they fall
+   through to whatever the system has. A full-width glyph is 1em, which is
+   exactly two of its cells, so the 80-column grid holds on its own. The stack
+   is per language because the same code point should be drawn with Chinese
+   shapes for zh and Japanese ones for ja. */
+:root[lang='zh'] .screen {
+  font-family: 'DOS', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei',
+               'Noto Sans CJK SC', 'Courier New', monospace;
+}
+
+:root[lang='ja'] .screen {
+  font-family: 'DOS', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', 'Meiryo',
+               'Noto Sans CJK JP', 'Courier New', monospace;
+}
+
+.caret {
+  display: inline-block;
+  width: var(--cell-w);
+  background: var(--c7);
+  color: #000;
+  animation: blink 1s steps(1, end) infinite;
+}
+@keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .caret { animation: none; } }
+
+.hint {
+  position: absolute;
+  left: 50%;
+  bottom: 6px;
+  transform: translateX(-50%);
+  font-size: 13px;
+  letter-spacing: 1px;
+  color: var(--c8);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .2s;
+}
+.hint.on { opacity: 1; animation: pulse 1.4s ease-in-out infinite; }
+@keyframes pulse { 0%, 100% { opacity: .35; } 50% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .hint.on { animation: none; opacity: .8; } }
+
+.bar {
+  flex: 0 0 auto;
+  width: 100%;
+  display: flex;
+  gap: 4px;
+  padding: 4px 6px calc(4px + env(safe-area-inset-bottom));
+  overflow-x: auto;
+  scrollbar-width: none;
+  border-top: 1px solid #1e1e1e;
+  background: #060606;
+}
+.bar::-webkit-scrollbar { display: none; }
+.bar.off { display: none; }
+
+.key {
+  flex: 0 0 auto;
+  min-width: 40px;
+  min-height: 40px;
+  padding: 0 8px;
+  font: inherit;
+  font-size: 15px;
+  color: var(--c11);
+  background: #101010;
+  border: 1px solid #2a2a2a;
+  border-radius: 3px;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.key:active { background: #202020; color: var(--c15); }
+.key.wide { color: var(--c14); }
+.key:focus-visible { outline: 2px solid var(--c11); outline-offset: 1px; }
+
+/* A strip of its own rather than something floating over the screen: at a
+   width where the screen reaches the edge of the view, floating means sitting
+   on top of the first row of text. */
+.chrome {
+  flex: 0 0 auto;
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  padding: 4px calc(6px + env(safe-area-inset-right)) 4px 6px;
+}
+.chrome button, .chrome select {
+  /* Not the DOS face: it has no ideographs, and the language list names each
+     language in its own script. */
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-size: 13px;
+  padding: 4px 8px;
+  color: var(--c8);
+  background: transparent;
+  border: 1px solid #202020;
+  border-radius: 3px;
+  cursor: pointer;
+  opacity: .5;
+  transition: opacity .15s, color .15s;
+}
+.chrome button:hover, .chrome button:focus-visible,
+.chrome select:hover, .chrome select:focus-visible { opacity: 1; color: var(--c15); }
+.chrome select { appearance: none; text-align: center; }
+.chrome select option { background: #000; color: var(--c7); }
+.chrome button[aria-pressed="true"] { color: var(--c14); opacity: 1; }
+
+.sink {
+  /* Kept inside the viewport, invisible: iOS only raises the on-screen
+     keyboard for an input it considers on screen. */
+  position: fixed;
+  left: 50%;
+  bottom: 0;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  border: 0;
+  padding: 0;
+  font-size: 16px;
+  pointer-events: none;
+}

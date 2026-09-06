@@ -1,0 +1,21 @@
+{
+  "name": "gopnik-web",
+  "private": true,
+  "version": "1.0.2",
+  "description": "ГОПНИК v1.02 (2003) — a browser remaster of the MS-DOS text RPG",
+  "author": "dkryaklin (https://dkryaklin.com)",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "font": "python3 tools/font/build_font.py",
+    "i18n": "node tools/i18n/translate.mjs"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.0",
+    "vite": "^6.0.0",
+    "vitest": "^2.1.0"
+  }
+}
