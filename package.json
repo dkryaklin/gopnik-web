@@ -5,6 +5,7 @@
   "description": "ГОПНИК v1.02 (2003) — a browser remaster of the MS-DOS text RPG",
   "author": "dkryaklin (https://dkryaklin.com)",
   "type": "module",
+  "packageManager": "pnpm@11.24.0",
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
