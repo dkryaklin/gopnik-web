@@ -9,13 +9,13 @@
  */
 export default {
   // ---- common -------------------------------------------------------------
-  'common.pressKey': '                           ^6何かキーを押せ',
-  'common.bannerVersion': '                                               ^0バージョン1.02',
+  'common.pressKey': '                                ^6何かキーを押せ',
+  'common.bannerVersion': '                                                ^0バージョン1.02',
   'common.bannerCredits': '           ^02003年 9月                                         ^2V.P.作',
   'common.prompt': '\\',
   'common.version': '^4ヤンキー: ^7バージョン1.02 2003年9月',
-  'common.died': '                                       ^4死んだ。',
-  'common.won': '                                       ^2勝った。',
+  'common.died': '                                      ^4死んだ。',
+  'common.won': '                                      ^2勝った。',
 
   // ---- enemy types and player classes -------------------------------------
   'type.0': 'ヒョロガリ',
@@ -217,7 +217,7 @@ export default {
   'stats.health': '^{c}体力 #/#  {flags}',
   'stats.accuracy': '命中率 #%',
   'stats.accuracy90': '命中率 90% ',
-  'stats.secondKick': '      2撃目 #%',
+  'stats.secondKick': '   2撃目 #%',
   'stats.manyKicks': '- #撃、  #撃目の命中率 #%',
   'stats.armor': '^2防御力 #    ',
   'stats.abibasOld': '^4Abibas ',
@@ -525,8 +525,8 @@ export default {
   // ---- vet ----------------------------------------------------------------
   'vet.welcome': '修理屋、いや獣医のとこに来たな。 ^6w^7 で帰る。',
   'vet.doc': '^0医者:心配すんな。犬みたいにすぐ治るさ。',
-  'vet.heal': '        ^2h^7 - ^{c}3^7 ルーブルで治療する',
-  'vet.fix': '         ^2r^7 - ^{c}7^7 ルーブルで骨折を直す',
+  'vet.heal': '  ^2h^7 - ^{c}3^7 ルーブルで治療する',
+  'vet.fix': '  ^2r^7 - ^{c}7^7 ルーブルで骨折を直す',
   'vet.healthy': '^0医者:健康体だ。さっさと失せな。',
   'vet.prompt': '^0獣医\\',
   'vet.truck': '^0うわっ！トラックにでも轢かれたのか？',

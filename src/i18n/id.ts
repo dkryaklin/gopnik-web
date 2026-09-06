@@ -9,13 +9,13 @@
  */
 export default {
   // ---- common -------------------------------------------------------------
-  'common.pressKey': '                       ^6Tekan tombol apa saja',
-  'common.bannerVersion': '                                                 ^0Versi 1.02',
+  'common.pressKey': '                            ^6Tekan tombol apa saja',
+  'common.bannerVersion': '                                                ^0Versi 1.02',
   'common.bannerCredits': '    ^0Tahun 2003, Juni,Sept                                         ^2oleh V.P.',
   'common.prompt': '\\',
   'common.version': '^4Preman: ^7versi 1.02 juni,sept 2003',
-  'common.died': '                                      ^4Lo mampus.',
-  'common.won': '                                      ^2Lo menang.',
+  'common.died': '                                     ^4Lo mampus.',
+  'common.won': '                                     ^2Lo menang.',
 
   // ---- enemy types and player classes -------------------------------------
   'type.0': 'Cupu',
@@ -217,7 +217,7 @@ export default {
   'stats.health': '^{c}HP #/#  {flags}',
   'stats.accuracy': 'Akurasi #%',
   'stats.accuracy90': 'Akurasi 90% ',
-  'stats.secondKick': ' Tendangan kedua #%',
+  'stats.secondKick': '   Tendangan kedua #%',
   'stats.manyKicks': '- # tendangan,  Akurasi tendangan # adalah #%',
   'stats.armor': '^2Armor #    ',
   'stats.abibasOld': '^4Abibas ',
@@ -525,8 +525,8 @@ export default {
   // ---- vet ----------------------------------------------------------------
   'vet.welcome': 'Lo nyampe di bengkel, ke dokter hewan, ketik ^6w^7 buat cabut',
   'vet.doc': '^0Dok: tenang aja bakal sembuh kayak anjing',
-  'vet.heal': '      ^2h^7 - buat ^{c}3^7 rubel lo diobatin',
-  'vet.fix': ' ^2r^7 - buat ^{c}7^7 rubel patah tulang lo dibenerin',
+  'vet.heal': '  ^2h^7 - buat ^{c}3^7 rubel lo diobatin',
+  'vet.fix': '  ^2r^7 - buat ^{c}7^7 rubel patah tulang lo dibenerin',
   'vet.healthy': '^0Dok: cabut sana lo udah sehat.',
   'vet.prompt': '^0Dokter Hewan\\',
   'vet.truck': '^0Wah! lo kayak abis kelindes truk!',

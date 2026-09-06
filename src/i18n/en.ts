@@ -5,13 +5,13 @@
  */
 export default {
   // ---- common -------------------------------------------------------------
-  'common.pressKey': '                            ^6Hit any key',
+  'common.pressKey': '                                 ^6Hit any key',
   'common.bannerVersion': '                                                ^0Version 1.02',
   'common.bannerCredits': '     ^02003 year, June,Sept                                         ^2by V.P.',
   'common.prompt': '\\',
   'common.version': '^4Gopnik: ^7version 1.02 june,sept 2003',
-  'common.died': '                                     ^4You croaked.',
-  'common.won': '                                       ^2You won.',
+  'common.died': '                                    ^4You croaked.',
+  'common.won': '                                      ^2You won.',
 
   // ---- enemy types and player classes -------------------------------------
   'type.0': 'Weakling',

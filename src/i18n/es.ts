@@ -9,13 +9,13 @@
  */
 export default {
   // ---- common -------------------------------------------------------------
-  'common.pressKey': '                       ^6Pulsa cualquier tecla',
+  'common.pressKey': '                            ^6Pulsa cualquier tecla',
   'common.bannerVersion': '                                                ^0Versión 1.02',
   'common.bannerCredits': '     ^0Año 2003, Junio,Sept                                         ^2por V.P.',
   'common.prompt': '\\',
   'common.version': '^4Macarra: ^7versión 1.02 junio,sept 2003',
-  'common.died': '                                     ^4Has palmado.',
-  'common.won': '                                      ^2Has ganado.',
+  'common.died': '                                    ^4Has palmado.',
+  'common.won': '                                     ^2Has ganado.',
 
   // ---- enemy types and player classes -------------------------------------
   'type.0': 'Pringado',
@@ -107,7 +107,7 @@ export default {
   'intro.desc0': '^1Chaval - un tipo normal. (Bonus - Novia, Discoteca).',
   'intro.desc1': '^1Pirado - un capullo torpe y tonto. (Bonus - Los rasguños se curan solos).',
   'intro.desc2': '^1Macarra - un macarra es un macarra. (Bonus - Guarida)',
-  'intro.desc3': '^1Ladrón - un bastardo con suerte. (Bonus - Robar, Trapicheos)',
+  'intro.desc3': '^1Ladrón - un bastardo con suerte. (Bonus - Robar, Camellos)',
   'intro.chooseNow': 'Y ahora elige: ',
   'intro.askName': '^2Y te llamas:^7 ',
   'intro.defaultName': 'Pring^6a^4do',
@@ -134,7 +134,7 @@ export default {
   // ---- a turn -------------------------------------------------------------
   'turn.highGone': '^6Se te ha pasado el colocón. Fuerza -2.',
   'turn.ranAround': '^6El gilipollas ha estado dando vueltas.',
-  'phone.silencer': 'Teléfono:^6Oye, ¿dónde estás? Ven, hemos pillado algo.(Ve a los trapicheos)',
+  'phone.silencer': 'Teléfono:^6Oye, ¿dónde estás? Ven, hemos pillado algo.(Ve a los camellos)',
   'phone.help': 'Teléfono:^6Oye, {name}^6, ¿dónde estás? Necesitamos una mano. (Ve a la guarida)',
   'phone.job': 'Teléfono:^6Oye, {name}^6, ¿dónde estás? Hay un asunto. (Ve a la guarida)',
   'phone.vasya1': 'Teléfono:^6¿Oye, está Vasya?',
@@ -217,7 +217,7 @@ export default {
   'stats.health': '^{c}Salud #/#  {flags}',
   'stats.accuracy': 'Precisión #%',
   'stats.accuracy90': 'Precisión 90% ',
-  'stats.secondKick': '  Segundo golpe #%',
+  'stats.secondKick': '   Segundo golpe #%',
   'stats.manyKicks': '- # golpes,  Precisión del golpe # es #%',
   'stats.armor': '^2Armadura #    ',
   'stats.abibasOld': '^4Abibas ',
@@ -403,7 +403,7 @@ export default {
   'help.whatFor': '^0 ¿Quieres saber para qué sirven?',
   'help.market': '^0 Mercado  - Compras ropa y comida. Puedes robar carteras - Sube la Suerte',
   'help.vet': '^0 Hospital - Curar fracturas y rasguños',
-  'help.girl1': '^0 Piba      - Vives en bares y has olvidado lo que es la vida sana. En su',
+  'help.girl1': '^0 Piba     - Vives en bares y has olvidado lo que es la vida sana. En su',
   'help.girl2': '^0            casa puedes vivir un par de días como una persona - Recuperar salud',
   'help.den1': '^0 Guarida  - Allí se juntan los macarras de verdad, hay mucho que hacer, pásate',
   'help.den2': '^0            a menudo. Y lo más importante, puedes llamar a la banda si las cosas',
@@ -411,7 +411,7 @@ export default {
   'help.club1': '^0 Club     - Puedes jugar pasta(Sube la Suerte), pero a los macarras de allí',
   'help.club2': '^0            no les gusta perder',
   'help.gym': '^0 Gimnasio - Allí puedes mejorar tus habilidades de pelea',
-  'help.dealers1': '^0 Trapicheos - Venden equipo de macarra, puedes soltarles la chatarra que has',
+  'help.dealers1': '^0 Camellos - Venden equipo de macarra, puedes soltarles la chatarra que has',
   'help.dealers2': '^0            y vender cosas que no necesites(En rojo en tus stats)',
   'help.screen': '^0Si no ves lo de arriba - sal y abre G.exe:Propiedades/Pantalla/Tamaño original',
 
@@ -464,7 +464,7 @@ export default {
   'market.unknown': '^6Todavía no sabes dónde está el mercado',
 
   // ---- dealers ------------------------------------------------------------
-  'dealers.welcome': 'Has llegado a los trapicheos, escribe  ^6w^7  para irte.',
+  'dealers.welcome': 'Has llegado a los camellos, escribe  ^6w^7  para irte.',
   'dealers.junk': 'Aquí puedes soltar la chatarra(^6x^7) y comprar algunas cosas',
   'dealers.sell': 'También puedes vender cosas que no necesites - ^6wes^7',
   'dealers.item1': '^61^7 - ^{c}#^7 rub. Porro',
@@ -476,7 +476,7 @@ export default {
   'dealers.item7': '^67^7 - ^{c}#^7 rub. Pistola casera (Puedes disparar en barrios chungos - ^6f^7 daño(#-#)).',
   'dealers.item8': '^68^7 - ^{c}#^7 rub. Balas - 6.',
   'dealers.item9': '^69^7 - ^{c}#^7 rub. Silenciador.',
-  'dealers.prompt': '^0Trapicheos\\',
+  'dealers.prompt': '^0Camellos\\',
   'dealers.noMoney': '^4Joder, no me llega la pasta.',
   'dealers.gotJoint': '^2Has comprado un porro',
   'dealers.noMoney2': '^4No hay pasta',
@@ -525,8 +525,8 @@ export default {
   // ---- vet ----------------------------------------------------------------
   'vet.welcome': 'Has llegado al taller de reparaciones, al veterinario, escribe  ^6w^7  para irte',
   'vet.doc': '^0Doc: no te preocupes, se curará como a un perro',
-  'vet.heal': '       ^2h^7 - por ^{c}3^7 rublos te curan',
-  'vet.fix': ' ^2r^7 - por ^{c}7^7 rublos te arreglan las fracturas',
+  'vet.heal': '  ^2h^7 - por ^{c}3^7 rublos te curan',
+  'vet.fix': '  ^2r^7 - por ^{c}7^7 rublos te arreglan las fracturas',
   'vet.healthy': '^0Doc: lárgate de aquí, estás sano.',
   'vet.prompt': '^0Veterinario\\',
   'vet.truck': '^0¡Joder! ¡Parece que te ha pasado un camión por encima!',
@@ -573,7 +573,7 @@ export default {
   'den.coolIs': '^4Tu nivel de macarra actual = #.',
   'den.weBackYou': '^0Sí, si pasa algo te cubrimos las espaldas.',
   'den.places1': '^0Aquí tenemos un par de sitios a los que deberías ir',
-  'den.places2': '^2Has averiguado dónde está el gimnasio y dónde los trapicheos',
+  'den.places2': '^2Has averiguado dónde está el gimnasio y dónde los camellos',
   'den.hurry': '^0Venga, más rápido..',
   'den.stealing': '^2Has venido a robar pasta',
   'den.cops': '^4¡Alerta, la pasma!',
@@ -629,7 +629,7 @@ export default {
   // ---- command list -------------------------------------------------------
   'cmds.w': 'Escribe: ^6w^7    para callejear por la zona - buscando problemas',
   'cmds.mar': 'Escribe: ^6mar^7  para ir al mercado',
-  'cmds.bmar': 'Escribe: ^6bmar^7 para ir a los trapicheos',
+  'cmds.bmar': 'Escribe: ^6bmar^7 para ir a los camellos',
   'cmds.rep': 'Escribe: ^6rep^7  para ir al veterinario',
   'cmds.girl': 'Escribe: ^6girl^7 para pasarte por casa de tu piba',
   'cmds.pr': 'Escribe: ^6pr^7   para ir a la guarida local de macarras',

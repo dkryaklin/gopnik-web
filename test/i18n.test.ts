@@ -34,6 +34,39 @@ const slots = (text: string) => (text.match(/#/g) ?? []).length
 const vars = (text: string) =>
   (text.match(/\{\w+\}/g) ?? []).filter((v) => !/^\{c\d*\}$/.test(v)).sort().join(',')
 const width = (text: string) => textWidth(text.replace(COLOUR, ''))
+// The colour codes cost no columns, but they are not always in front of the
+// padding, so an indent is counted on the line as it is written.
+const indent = (text: string) => /^ */.exec(text)![0].length
+
+/**
+ * A run of leading spaces means one of two things, and on the page the two look
+ * the same. A line with about as much room to its right as to its left is
+ * centred - the prompt on the title screen, the two endings, the gloss under
+ * the logo - and what a translation has to hold is the centre, which is rarely
+ * the exact middle of the screen. Every other padded line hangs off a left
+ * margin - the vet's two prices, the note beside a save - and what it has to
+ * hold is the indent. Centring one of those is how the vet's menu came to start
+ * in a different column in every language.
+ */
+const SYMMETRY = 6
+const isCentred = (text: string) =>
+  indent(text) >= 2 && Math.abs(indent(text) - (COLS - width(text))) <= SYMMETRY
+const centre = (text: string) => indent(text) + (width(text) - indent(text)) / 2
+
+/**
+ * The places table on the help screen: a name in a column, then `- `, then what
+ * the place is for, wrapping onto lines indented to where that text starts.
+ * None of it is leading whitespace, so the rule above never sees it.
+ */
+const TABLE = ['help.market', 'help.vet', 'help.girl1', 'help.den1', 'help.club1',
+               'help.gym', 'help.dealers1']
+const TABLE_WRAPPED = ['help.girl2', 'help.den2', 'help.den3', 'help.club2', 'help.dealers2']
+/** Where the text of a row starts, which is where its name field ends plus `- `. */
+const TEXT_COLUMN = 12
+const rowTextColumn = (line: string) => {
+  const row = /^\^\d .*?- /.exec(line)
+  return row ? width(row[0]) : -1
+}
 
 describe('the 80 columns a message has', () => {
   it('counts one cell for everything the code page can draw', () => {
@@ -66,6 +99,20 @@ describe('the message catalogues', () => {
     for (const [key, line] of Object.entries(original)) {
       expect({ key, slots: slots(english[key]) }).toEqual({ key, slots: slots(line) })
       expect({ key, vars: vars(english[key]) }).toEqual({ key, vars: vars(line) })
+    }
+  })
+
+  it('stands an English line where the original stands it', () => {
+    // Everything else is held to the English line, so a centre wrong here is a
+    // centre wrong in eight languages: that is how "Hit any key" came to sit
+    // five columns left of where the author put his prompt.
+    for (const [key, line] of Object.entries(original)) {
+      if (isCentred(line)) {
+        const drift = Math.abs(centre(english[key]) - centre(line))
+        expect({ key, drift: drift <= 1 }).toEqual({ key, drift: true })
+      } else if (indent(line) >= 2) {
+        expect({ key, indent: indent(english[key]) }).toEqual({ key, indent: indent(line) })
+      }
     }
   })
 
@@ -107,6 +154,33 @@ describe('the message catalogues', () => {
     // level. Two rungs reading the same means a level up that shows nothing.
     const titles = [...Array(43).keys()].map((i) => catalog[`title.${i}`])
     expect(new Set(titles).size).toBe(titles.length)
+  })
+
+  it.each(translated)('%s lands a centred line on the centre it was centred on', (_locale, catalog) => {
+    for (const [key, line] of Object.entries(english)) {
+      if (!isCentred(line) || catalog[key] === undefined) continue
+      // Half a column of rounding on each side is all a different length costs.
+      const drift = Math.abs(centre(catalog[key]) - centre(line))
+      expect({ key, drift: drift <= 1 }).toEqual({ key, drift: true })
+    }
+  })
+
+  it.each(translated)('%s leaves an indented line its indent', (_locale, catalog) => {
+    for (const [key, line] of Object.entries(english)) {
+      if (indent(line) < 2 || isCentred(line) || catalog[key] === undefined) continue
+      expect({ key, indent: indent(catalog[key]) }).toEqual({ key, indent: indent(line) })
+    }
+  })
+
+  it.each(Object.entries(catalogs))('%s lines the places table up in one column', (_locale, catalog) => {
+    for (const key of TABLE) {
+      expect({ key, column: rowTextColumn(catalog[key]) }).toEqual({ key, column: TEXT_COLUMN })
+    }
+    for (const key of TABLE_WRAPPED) {
+      // The wrapped lines carry the colour code first, then the indent.
+      expect({ key, column: indent(catalog[key].replace(COLOUR, '')) })
+        .toEqual({ key, column: TEXT_COLUMN })
+    }
   })
 
   it.each(translated)('%s stays inside the screen', (_locale, catalog) => {

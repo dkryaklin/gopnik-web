@@ -87,9 +87,13 @@ These are mechanical and the game breaks if you get them wrong.
    player's keyboard. So are `i`, `k`, `s`, `run`, `help`, `mar`, `kos`, `hp`.
    Never translate or capitalise them.
 5. **Leading and trailing spaces are layout.** A line that starts with a run of
-   spaces is centred on the screen by hand; keep it roughly centred, the padding
-   will be corrected afterwards. A line that *ends* with a space is glued to the
-   next thing printed — keep that space.
+   spaces is either centred on the screen or hanging off a left margin; leave
+   the run alone and the padding will be corrected afterwards. A line that
+   *ends* with a space is glued to the next thing printed — keep that space.
+   In the places table on the help screen — `help.market`, `help.vet`,
+   `help.girl1`, `help.den1`, `help.club1`, `help.gym`, `help.dealers1` — the
+   name before the `-` sits in a column eight wide, so give the place a name
+   that fits in eight columns.
 6. **Never exceed 80 columns.** Chinese and Japanese characters take two columns
    each; everything else takes one. Colour codes take none. Rewrite shorter
    rather than run over — German and Portuguese will need it.

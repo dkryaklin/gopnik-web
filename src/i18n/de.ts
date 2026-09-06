@@ -9,13 +9,13 @@
  */
 export default {
   // ---- common -------------------------------------------------------------
-  'common.pressKey': '                       ^6Drück irgendeine Taste',
+  'common.pressKey': '                            ^6Drück irgendeine Taste',
   'common.bannerVersion': '                                                ^0Version 1.02',
   'common.bannerCredits': '     ^02003 Jahr, Juni,Sept                                         ^2von V.P.',
   'common.prompt': '\\',
   'common.version': '^4Gopnik: ^7Version 1.02 Juni,Sept 2003',
-  'common.died': '                                     ^4Du bist hin.',
-  'common.won': '                                   ^2Du hast gewonnen.',
+  'common.died': '                                    ^4Du bist hin.',
+  'common.won': '                                  ^2Du hast gewonnen.',
 
   // ---- enemy types and player classes -------------------------------------
   'type.0': 'Lauch',
@@ -401,17 +401,17 @@ export default {
   'help.places': '^0 Wenn du Orte besuchst, lernst du, was sie dir bringen.',
   'help.newDistrict': '^0 Im neuen Bezirk musst du die Orte erst wieder finden.',
   'help.whatFor': '^0 Willst wissen, was das bringt?',
-  'help.market': '^0 Markt     - Klamotten & Futter kaufen. Brieftaschen klauen - Glück pushen',
-  'help.vet': '^0 Doc       - Brüche und Kratzer heilen',
-  'help.girl1': '^0 Braut     - Du hängst in Kneipen rum und vergisst, was gesund ist. Bei ihr',
+  'help.market': '^0 Markt    - Klamotten & Futter kaufen. Brieftaschen klauen - Glück pushen',
+  'help.vet': '^0 Doc      - Brüche und Kratzer heilen',
+  'help.girl1': '^0 Braut    - Du hängst in Kneipen rum und vergisst, was gesund ist. Bei ihr',
   'help.girl2': '^0            kannst du wie ein Mensch leben - Gesundheit regenerieren',
-  'help.den1': '^0 Treff     - Hier hängen die echten Typen ab, viel zu tun, schau oft rein.',
+  'help.den1': '^0 Treff    - Hier hängen die echten Typen ab, viel zu tun, schau oft rein.',
   'help.den2': '^0            Und wenn es brennt, kannst du die Gang rufen,',
   'help.den3': '^0            behalte deinen Status im Auge.',
-  'help.club1': '^0 Club      - Zocken(Glück pushen), aber die Prollos verlieren nicht gern',
+  'help.club1': '^0 Club     - Zocken(Glück pushen), aber die Prollos verlieren nicht gern',
   'help.club2': '^0            ',
-  'help.gym': '^0 Gym       - Hier kannst du deine Skills aufbessern',
-  'help.dealers1': '^0 Hehler    - Verkaufen Prollo-Kit, du kannst Schrott loswerden',
+  'help.gym': '^0 Gym      - Hier kannst du deine Skills aufbessern',
+  'help.dealers1': '^0 Hehler   - Verkaufen Prollo-Kit, du kannst Schrott loswerden',
   'help.dealers2': '^0            und unnötiges Zeug verkaufen(rot in der Statistik)',
   'help.screen': '^0Siehst oben nix? Beenden und G.exe:Eigenschaften/Bildschirm/Originalgröße',
 
@@ -525,8 +525,8 @@ export default {
   // ---- vet ----------------------------------------------------------------
   'vet.welcome': 'Du bist beim Doc, tipp  ^6w^7  zum Gehen',
   'vet.doc': '^0Doc: mach dir kein Kopp, heilt wie bei \'nem Hund',
-  'vet.heal': '^2h^7 - für ^{c}3^7 Rubel wirst du zusammengeflickt',
-  'vet.fix': '   ^2r^7 - für ^{c}7^7 Rubel werden Brüche gerichtet',
+  'vet.heal': '  ^2h^7 - für ^{c}3^7 Rubel wirst du zusammengeflickt',
+  'vet.fix': '  ^2r^7 - für ^{c}7^7 Rubel werden Brüche gerichtet',
   'vet.healthy': '^0Doc: verpiss dich, bist gesund.',
   'vet.prompt': '^0Doc\\',
   'vet.truck': '^0Oha! Dich hat wohl \'n LKW überrollt!',

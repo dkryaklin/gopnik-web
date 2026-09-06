@@ -215,20 +215,90 @@ export function textWidth(text) {
 }
 
 /**
- * Re-centres a line the author centred by hand.
+ * Puts a padded line back where the author put it.
  *
- * The original pads with spaces to put a line where it looks right, which is
- * rarely the exact middle of the screen. A translation is a different length,
- * so the padding is recomputed to hold the same centre point rather than
- * trusted to the model, which cannot count columns.
+ * The original pads with spaces, and the padding means one of two things. A
+ * line with about as much room to its right as to its left is centred - the
+ * title screen's prompt, the two endings, the gloss under the logo - and what
+ * a translation has to hold is its centre point, which is rarely the exact
+ * middle of the screen. Every other padded line hangs off a left margin - a
+ * menu item, the note beside a save - and what it has to hold is the indent.
+ *
+ * On the page the two are the same run of spaces, so they are told apart by
+ * arithmetic: a centred line's two margins are within a few columns of each
+ * other and an indented line's are nowhere near. Centring a menu item is how
+ * the vet's two lines ended up starting in a different column in every
+ * language, and the model cannot count columns, so neither is left to it.
  */
+const SYMMETRY = 6
+
 export function recentre(english, text) {
   const pad = /^ +/.exec(english)
   if (!pad || pad[0].length < 2) return text
-  const centre = pad[0].length + (textWidth(english) - pad[0].length) / 2
+  const indent = pad[0].length
   const body = text.replace(/^\s+/, '')
+  const line = textWidth(english)
+  // An indented line: the margin is the margin, whatever the words after it.
+  if (Math.abs(indent - (COLS - line)) > SYMMETRY) return ' '.repeat(indent) + body
+  const centre = indent + (line - indent) / 2
   const left = Math.max(0, Math.round(centre - textWidth(body) / 2))
   return ' '.repeat(Math.min(left, Math.max(0, COLS - textWidth(body)))) + body
+}
+
+/**
+ * The places table on the help screen.
+ *
+ * The author drew it as a table: a name in a column nine wide, then `- `, then
+ * what the place is for, wrapping onto lines indented to where that text
+ * starts. Nothing about it is leading whitespace, so recentre() never sees it
+ * and the model, left to itself, put the dash wherever the name ended - three
+ * different columns in Portuguese. The geometry is the author's and it is
+ * reimposed here rather than asked for.
+ */
+const TABLE = new Set([
+  'help.market', 'help.vet', 'help.girl1', 'help.den1', 'help.club1',
+  'help.gym', 'help.dealers1',
+])
+const TABLE_WRAPPED = new Set([
+  'help.girl2', 'help.den2', 'help.den3', 'help.club2', 'help.dealers2',
+])
+/** The column the text of a row starts in, and the row's name field ends at. */
+export const TEXT_COLUMN = 12
+const NAME_FIELD = TEXT_COLUMN - 3   // a leading space, then the name, then '- '
+
+/**
+ * Pads to a number of columns, which is not a number of characters in CJK. A
+ * name too long for the field still gets its space: `Esconderijo- ` is worse
+ * than a row that misses the column, and problems() asks for a shorter one.
+ */
+function padTo(text, columns) {
+  return text + ' '.repeat(Math.max(1, columns - textWidth(text)))
+}
+
+/** The name of a row of the places table, or null if the line is not one. */
+export function rowName(key, text) {
+  if (!TABLE.has(key)) return null
+  const row = /^(\^\d) *(.*?) *- /.exec(text)
+  return row ? row[2] : null
+}
+
+function relabel(key, text) {
+  if (TABLE.has(key)) {
+    const row = /^(\^\d) *(.*?) *- (.*)$/.exec(text)
+    if (!row) return text
+    return `${row[1]} ${padTo(row[2], NAME_FIELD)}- ${row[3]}`
+  }
+  if (TABLE_WRAPPED.has(key)) {
+    const wrapped = /^(\^\d) *(.*)$/.exec(text)
+    if (!wrapped) return text
+    return wrapped[1] + ' '.repeat(TEXT_COLUMN) + wrapped[2]
+  }
+  return text
+}
+
+/** Everything a translated line's spacing has to hold, in one call. */
+export function relayout(key, english, text) {
+  return relabel(key, recentre(english, text))
 }
 
 // ---------------------------------------------------------------------------
@@ -243,7 +313,7 @@ const tokens = (text) => (text.match(COLOUR) ?? []).join('')
 const slots = (text) => (text.match(/#/g) ?? []).length
 const vars = (text) => (text.match(/\{\w+\}/g) ?? []).filter((v) => !/^\{c\d*\}$/.test(v)).sort().join(',')
 
-export function problems(english, text) {
+export function problems(key, english, text) {
   const out = []
   if (typeof text !== 'string') return ['not a string']
   if (!english.trim()) return text.trim() ? ['must be empty, as the English is'] : []
@@ -255,8 +325,15 @@ export function problems(english, text) {
   // A handful of the author's own lines run past column 80 and wrap; a
   // translation is allowed to be as long as its English line, no longer.
   const budget = Math.max(COLS, textWidth(english))
-  const width = textWidth(recentre(english, text))
+  const width = textWidth(relayout(key, english, text))
   if (width > budget) out.push(`is ${width} columns wide, the most it may be is ${budget}`)
+  // A row of the places table is padded into its column, so a name too long
+  // for it cannot be padded, only cut - which is the model's job, not ours.
+  const name = rowName(key, text)
+  if (name !== null && textWidth(name) > NAME_FIELD - 1) {
+    out.push(`names the place "${name}", which is ${textWidth(name)} columns `
+      + `and the table's first column holds ${NAME_FIELD - 1}`)
+  }
   return out
 }
 
@@ -423,9 +500,9 @@ export async function translate(lang, { batchSize, model, apiKey, only, force })
           rejected.push({ ...item, why: 'missing from the answer' })
           continue
         }
-        const why = problems(item.en, line)
+        const why = problems(item.key, item.en, line)
         if (why.length) rejected.push({ ...item, why: why.join('; '), was: line })
-        else done.set(item.key, recentre(item.en, line))
+        else done.set(item.key, relayout(item.key, item.en, line))
       }
       outstanding = rejected
       complaints = rejected.length

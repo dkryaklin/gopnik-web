@@ -9,13 +9,13 @@
  */
 export default {
   // ---- common -------------------------------------------------------------
-  'common.pressKey': '                       ^6Appuie sur une touche',
+  'common.pressKey': '                            ^6Appuie sur une touche',
   'common.bannerVersion': '                                                ^0Version 1.02',
   'common.bannerCredits': '     ^02003 year, June,Sept                                         ^2par V.P.',
   'common.prompt': '\\',
   'common.version': '^4Caillera: ^7version 1.02 juin,sept 2003',
-  'common.died': '                                      ^4T\'es mort.',
-  'common.won': '                                      ^2T\'as gagné.',
+  'common.died': '                                     ^4T\'es mort.',
+  'common.won': '                                     ^2T\'as gagné.',
 
   // ---- enemy types and player classes -------------------------------------
   'type.0': 'Fragile',
@@ -217,7 +217,7 @@ export default {
   'stats.health': '^{c}Santé #/#  {flags}',
   'stats.accuracy': 'Précision #%',
   'stats.accuracy90': 'Précision 90% ',
-  'stats.secondKick': '  Deuxième coup #%',
+  'stats.secondKick': '   Deuxième coup #%',
   'stats.manyKicks': '- # coups,  Précision du coup # à #%',
   'stats.armor': '^2Armure #    ',
   'stats.abibasOld': '^4Abibas ',
@@ -411,7 +411,7 @@ export default {
   'help.club1': '^0 Club     - Tu peux jouer la thune (monte ta Chance), mais les cailleras',
   'help.club2': '^0            du coin aiment pas perdre',
   'help.gym': '^0 Salle    - Là-bas tu peux améliorer tes techniques de baston',
-  'help.dealers1': '^0 Receleurs- Ils vendent le kit de la caillera, tu peux leur refiler ton',
+  'help.dealers1': '^0 Receleur - Ils vendent le kit de la caillera, tu peux leur refiler ton',
   'help.dealers2': '^0            et vendre c\'dont t\'as plus besoin(Marqué en rouge dans tes stats)',
   'help.screen': '^0Si tu vois rien en haut - quitte et ouvre G.exe:Propriétés/Écran/Taille initiale',
 
@@ -525,8 +525,8 @@ export default {
   // ---- vet ----------------------------------------------------------------
   'vet.welcome': 'T\'es au garage, chez le véto, tape ^6w^7 pour t\'tirer',
   'vet.doc': '^0Doc : t\'inquiète, ça cicatrise comme sur un chien',
-  'vet.heal': ' ^2h^7 - pour ^{c}3^7 roubles ils te rafistolent',
-  'vet.fix': '^2r^7 - pour ^{c}7^7 roubles ils réparent tes fractures',
+  'vet.heal': '  ^2h^7 - pour ^{c}3^7 roubles ils te rafistolent',
+  'vet.fix': '  ^2r^7 - pour ^{c}7^7 roubles ils réparent tes fractures',
   'vet.healthy': '^0Doc : tire-toi, t\'es en forme.',
   'vet.prompt': '^0Véto\\',
   'vet.truck': '^0Wesh ! On dirait qu\'un camion t\'a roulé dessus !',
