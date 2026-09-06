@@ -6,7 +6,7 @@ import { BANNER, END_LOGO, WIN_LETTERS } from './art'
 import { random, div } from './rng'
 import { endSession } from './save'
 import * as io from './io'
-import type { MsgKey } from '../i18n'
+import type { MsgKey, Ref, Value } from '../i18n'
 
 /**
  * A line under the art saying what it reads.
@@ -17,8 +17,8 @@ import type { MsgKey } from '../i18n'
  * printed, which keeps the original screen exactly as it was.
  */
 function gloss(key: MsgKey): void {
-  const line = io.msg(key)
-  if (line) io.printArtLine(line)
+  // Printed by key rather than as text, so a change of language redraws it.
+  if (io.msg(key)) io.printlnArt(key)
 }
 
 /**
@@ -29,14 +29,34 @@ function space(count: number): void {
   for (let i = 0; i < count; i++) io.printArtLine('')
 }
 
+function typeKey(index: number): MsgKey {
+  return `type.${Math.max(0, Math.min(10, index))}` as MsgKey
+}
+
+function titleKey(level: number): MsgKey {
+  if (level < 0) level = 0
+  return level > LAST_TITLE ? 'title.none' : `title.${level}` as MsgKey
+}
+
 export function typeName(index: number): string {
-  return io.msg(`type.${Math.max(0, Math.min(10, index))}` as MsgKey)
+  return io.msg(typeKey(index))
 }
 
 export function titleName(level: number): string {
-  if (level < 0) level = 0
-  if (level > LAST_TITLE) return io.msg('title.none')
-  return io.msg(`title.${level}` as MsgKey)
+  return io.msg(titleKey(level))
+}
+
+/**
+ * The same two words as the message they still are, for dropping into a
+ * sentence. A line built out of these is written again, whole, in whatever
+ * language is set later; one built out of their text is not.
+ */
+export function typeRef(index: number, cells?: number): Ref {
+  return { key: typeKey(index), cells }
+}
+
+export function titleRef(level: number): Ref {
+  return { key: titleKey(level) }
 }
 
 export async function banner(): Promise<void> {
@@ -121,7 +141,7 @@ function healthColour(hp: number, maxHp: number): string {
 }
 
 export function showStats(): void {
-  io.println('stats.you', P.level, { type: typeName(P.classCode), title: titleName(P.level) })
+  io.println('stats.you', P.level, { type: typeRef(P.classCode), title: titleRef(P.level) })
   io.println('stats.name', { name: P.name })
   if (P.level <= 39) io.println('stats.exp', P.exp, P.expNext)
 
@@ -171,11 +191,11 @@ export function showStats(): void {
   if (P.cleaver) io.print('stats.cleaver')
   io.printRawLine('')
 
-  let flags = ''
-  if (P.jawBroken === 1) flags += io.msg('stats.jawBroken')
-  if (P.toothGuard === 1) flags += io.msg('stats.toothGuard')
-  if (P.legBroken === 1) flags += io.msg('stats.legBroken')
-  if (P.highTurns > 0) flags += io.msg('stats.high')
+  const flags: Value[] = []
+  if (P.jawBroken === 1) flags.push({ key: 'stats.jawBroken' })
+  if (P.toothGuard === 1) flags.push({ key: 'stats.toothGuard' })
+  if (P.legBroken === 1) flags.push({ key: 'stats.legBroken' })
+  if (P.highTurns > 0) flags.push({ key: 'stats.high' })
   io.println('stats.health', P.hp, P.maxHp, { c: healthColour(P.hp, P.maxHp), flags })
 
   accuracy(P.agi)
@@ -200,16 +220,15 @@ export function showStats(): void {
 }
 
 export function showEnemy(): void {
-  let title = E.level <= MAX_LEVEL ? titleName(E.level) : io.msg('title.none')
-  title = io.msg('enemy.titleSep') + title
-  if (E.type >= 8) title = ''
-  io.println('enemy.this', E.level, { type: typeName(E.type), title })
+  const named: Ref = E.level <= MAX_LEVEL ? titleRef(E.level) : { key: 'title.none' }
+  const title: Value = E.type >= 8 ? '' : [{ key: 'enemy.titleSep' }, named]
+  io.println('enemy.this', E.level, { type: typeRef(E.type), title })
   io.println('enemy.skills', E.str, E.agi, E.vit, E.luck)
   io.println('enemy.damage', E.dmgMin, E.dmgMax)
 
-  let flags = ''
-  if (E.jawBroken === 1) flags += io.msg('stats.jawBroken')
-  if (E.legBroken === 1) flags += io.msg('stats.legBroken')
+  const flags: Value[] = []
+  if (E.jawBroken === 1) flags.push({ key: 'stats.jawBroken' })
+  if (E.legBroken === 1) flags.push({ key: 'stats.legBroken' })
   io.println('enemy.health', E.hp, E.maxHp, { c: healthColour(E.hp, E.maxHp), flags })
 
   accuracy(E.agi)
@@ -217,7 +236,7 @@ export function showEnemy(): void {
 }
 
 export function help(): void {
-  const type = typeName(P.classCode)
+  const type = typeRef(P.classCode)
   const strWeight = WEIGHTS[P.classCode][0]
   io.println('help.intro', { type, name: P.name })
   io.println('help.first')

@@ -2,7 +2,7 @@ import './styles.css'
 import { Terminal, COLS, ROWS } from './ui/terminal'
 import { DosConsole } from './ui/console'
 import { mountChrome, TOUCH_KEYS } from './ui/chrome'
-import { bindConsole } from './engine/io'
+import { bindConsole, recordLine, redraw } from './engine/io'
 import { HaltGame } from './engine/state'
 import { run } from './engine/game'
 import { getLocale, onLocaleChange, t } from './i18n'
@@ -35,7 +35,7 @@ bar.className = 'bar'
 const coarse = window.matchMedia('(pointer: coarse)').matches
 if (!coarse) bar.classList.add('off')
 
-mountChrome(app, () => location.reload())
+mountChrome(app, { onRestart: () => location.reload(), onDone: () => con.focus() })
 app.append(stage, bar, sink)
 
 const term = new Terminal(screen)
@@ -43,6 +43,7 @@ const con = new DosConsole(term, sink, {
   onModeChange: (mode) => {
     hint.classList.toggle('on', coarse && mode === 'key')
   },
+  onLine: recordLine,
 })
 bindConsole(con)
 
@@ -77,7 +78,22 @@ stage.addEventListener('pointerdown', () => {
 
 const paintHint = () => { hint.textContent = t('ui.tapToContinue') }
 paintHint()
-onLocaleChange(paintHint)
+// Changing the language rewrites the screen rather than only the next thing
+// the game says: every line is remembered as the message it was printed from,
+// so the whole of it can be printed again in the language now set. The fit is
+// taken again with it, because two of the languages are drawn in another face.
+let quiet: ReturnType<typeof setTimeout> | undefined
+onLocaleChange(() => {
+  paintHint()
+  // The screen is a live region, and every line of it is about to be written
+  // again: without this a screen reader reads the whole game back out. What
+  // changed is the language, and the page has already said so.
+  screen.setAttribute('aria-live', 'off')
+  clearTimeout(quiet)
+  redraw()
+  resize()
+  quiet = setTimeout(() => screen.setAttribute('aria-live', 'polite'), 300)
+})
 
 /** The cell the font was drawn on: 8x16, so 16px of type is one cell tall. */
 const BASE_FONT = 16

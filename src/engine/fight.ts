@@ -9,7 +9,7 @@ import { random, round, div } from './rng'
 import { MAX_LEVEL } from './tables'
 import { levelUp } from './levelup'
 import { drinkBeer, eatJoint } from './consumables'
-import { showStats, showEnemy, typeName, endScreen, winAnim } from './screens'
+import { showStats, showEnemy, typeRef, endScreen, winAnim } from './screens'
 import * as io from './io'
 import type { MsgKey } from '../i18n'
 
@@ -117,10 +117,10 @@ async function intro(mode: number): Promise<void> {
     } else if (E.type === 7) {
       io.println('fight.outlaw')
     } else if (E.type === 8) {
-      io.println('fight.cop', { name: P.name, type: typeName(E.type) })
+      io.println('fight.cop', { name: P.name, type: typeRef(E.type) })
     } else if (E.type === 9) {
       io.println('fight.maniac1')
-      io.println('fight.maniac2', { type: typeName(E.type) })
+      io.println('fight.maniac2', { type: typeRef(E.type) })
     }
     return
   }

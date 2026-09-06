@@ -3,10 +3,10 @@
 import { P, W } from './state'
 import { random } from './rng'
 import { levelUp } from './levelup'
-import { titleName } from './screens'
+import { titleRef } from './screens'
 import { writeSave, writePlaces } from './save'
 import * as io from './io'
-import { typeName } from './screens'
+import { typeRef } from './screens'
 
 /** Church(): a blessing, and God gets ruder every time you turn up. */
 export async function church(): Promise<void> {
@@ -42,7 +42,7 @@ export async function church(): Promise<void> {
       io.println(key)
       await io.readKey()
     }
-    io.println('church.first7', { name: P.name, type: typeName(P.classCode) })
+    io.println('church.first7', { name: P.name, type: typeRef(P.classCode) })
     await io.readKey()
     io.println('church.first8')
     await io.readKey()
@@ -55,7 +55,7 @@ export async function church(): Promise<void> {
   if (blessing === 0) {
     io.println('church.cool')
     await io.readKey()
-    io.println('church.wereNow', { old: titleName(P.level), new: titleName(P.level + 1) })
+    io.println('church.wereNow', { old: titleRef(P.level), new: titleRef(P.level + 1) })
     P.exp = P.expNext
     levelUp(0)
   } else if (blessing === 1) {

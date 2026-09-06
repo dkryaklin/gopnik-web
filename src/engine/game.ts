@@ -10,7 +10,7 @@ import {
 import { genEnemy, initRector } from './enemy'
 import { fight } from './fight'
 import { drinkBeer, eatJoint } from './consumables'
-import { banner, showStats, help, typeName } from './screens'
+import { banner, showStats, help, typeRef } from './screens'
 import { market, dealers, vet, girlfriend, den, club, gym } from './places'
 import { church, mageSave } from './encounters'
 import * as io from './io'
@@ -123,7 +123,7 @@ const NAME_COL = 16
 const TYPE_COL = 12
 const LEVEL_COL = 9
 
-/** Pads a field out to its column, counting cells and ignoring colour codes. */
+/** Pads the player's own name out to its column; the rest pad themselves. */
 function pad(text: string, cells: number): string {
   return text + ' '.repeat(Math.max(1, cells - textWidth(text.replace(/\^\d/g, ''))))
 }
@@ -135,10 +135,10 @@ function showSessions(list: SessionInfo[]): void {
     io.println('session.slot', {
       n: s.slot,
       name: pad(s.name, NAME_COL),
-      type: pad(typeName(s.classCode), TYPE_COL),
-      level: pad(io.msg('session.level', { n: s.level }), LEVEL_COL),
-      district: io.msg('session.place', { n: s.district }),
-      last: s === newest && list.length > 1 ? io.msg('session.latest') : '',
+      type: typeRef(s.classCode, TYPE_COL),
+      level: { key: 'session.level', vars: { n: s.level }, cells: LEVEL_COL },
+      district: { key: 'session.place', vars: { n: s.district } },
+      last: s === newest && list.length > 1 ? { key: 'session.latest' } : '',
     })
   }
   io.println('session.new')
@@ -546,10 +546,10 @@ async function enemyEvent(): Promise<void> {
     const aggressive = lucky ? E.type >= 7 : E.type >= 3
 
     if (!aggressive) {
-      io.println('event.enemy', E.level, { type: typeName(E.type) })
+      io.println('event.enemy', E.level, { type: typeRef(E.type) })
       if ((await io.readCmd()) === 'y') joinFight = 1
     } else {
-      io.println('event.enemyAggro', E.level, { type: typeName(E.type) })
+      io.println('event.enemyAggro', E.level, { type: typeRef(E.type) })
       if ((await io.readCmd()) === 'y') joinFight = 1
       else if (random(2) === 0) {
         io.println('event.noticedYou')
@@ -566,7 +566,7 @@ async function enemyEvent(): Promise<void> {
 async function highEvent(): Promise<void> {
   if (P.highTurns > 0 && random(7) === 0) io.println('high.floating')
   if (P.highTurns > 0 && random(7) === 0) {
-    io.println('event.enemy', random(W.district * 10 + 1), { type: typeName(random(7)) })
+    io.println('event.enemy', random(W.district * 10 + 1), { type: typeRef(random(7)) })
     await io.readLine()
     io.println('high.nobody')
   } else {

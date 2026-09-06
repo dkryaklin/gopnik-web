@@ -9,6 +9,8 @@ export type KeyMode = 'idle' | 'key' | 'line'
 
 export interface ConsoleHost {
   onModeChange?: (mode: KeyMode) => void
+  /** A line the player finished typing, so it can be drawn again on a redraw. */
+  onLine?: (text: string) => void
 }
 
 const MAX_LINE = 255
@@ -33,7 +35,15 @@ export class DosConsole {
     window.addEventListener('keydown', (e) => this.onKeyDown(e))
     sink.addEventListener('beforeinput', (e) => this.onBeforeInput(e as InputEvent))
     sink.addEventListener('input', () => { sink.value = '' })
-    sink.addEventListener('blur', () => setTimeout(() => this.focus(), 0))
+    // The on-screen keyboard only stays up while the hidden input has focus,
+    // so the console takes it back when nothing else wanted it. When something
+    // did - the language picker, a key on the touch bar - it keeps it, or the
+    // control is closed again the instant it opens.
+    sink.addEventListener('blur', (e) => {
+      const next = (e as FocusEvent).relatedTarget as Element | null
+      if (next && next !== document.body) return
+      setTimeout(() => this.focus(), 0)
+    })
   }
 
   focus(): void {
@@ -99,6 +109,22 @@ export class DosConsole {
 
   clear(): void {
     this.term.clear()
+  }
+
+  /**
+   * Wipes the screen, lets the caller write it again, and puts the player back
+   * where they were: the line they were part-way through typing is echoed
+   * again and the cursor returns to the end of it.
+   */
+  redraw(paint: () => void): void {
+    this.term.hideCaret()
+    this.term.clear()
+    paint()
+    if (this.mode !== 'line') return
+    const typed = this.buffer
+    this.buffer = ''
+    this.insert(typed)
+    this.term.showCaret()
   }
 
   delay(ms: number): Promise<void> {
@@ -183,6 +209,7 @@ export class DosConsole {
     this.term.newline()
     const line = this.buffer
     this.buffer = ''
+    this.host.onLine?.(line)
     const resolve = this.resolveLine
     this.resolveLine = null
     this.setMode('idle')
@@ -192,7 +219,10 @@ export class DosConsole {
   private onKeyDown(e: KeyboardEvent): void {
     if (e.ctrlKey || e.metaKey || e.altKey) return
     const target = e.target as HTMLElement | null
-    if (target && target !== this.sink && target.tagName === 'BUTTON') return
+    // Anything the player has deliberately put focus in - a control in the
+    // browser chrome, a key on the touch bar - is typed into, not through.
+    if (target && target !== this.sink &&
+        (target.tagName === 'BUTTON' || target.closest('.chrome'))) return
     if (e.key === 'Unidentified' || e.key === 'Process') return
     if (e.key === 'Tab' || e.key === 'F5' || e.key.startsWith('Arrow')) return
     if (this.mode === 'idle') {

@@ -6,7 +6,7 @@ import { random } from './rng'
 import { levelUp } from './levelup'
 import { genEnemy } from './enemy'
 import { fight } from './fight'
-import { typeName } from './screens'
+import { typeRef } from './screens'
 import * as io from './io'
 import type { MsgKey } from '../i18n'
 
@@ -157,7 +157,7 @@ export async function market(): Promise<void> {
       } else {
         genEnemy(1)
         io.println('market.caught')
-        io.println('market.thisIs', E.level, { type: typeName(E.type) })
+        io.println('market.thisIs', E.level, { type: typeRef(E.type) })
         await fight(1)
         io.println('market.copsComing')
         sub = 'w'
@@ -499,7 +499,7 @@ export async function den(): Promise<void> {
 
     if (W.denHelpQuest === 1 && sub === 'hp') {
       genEnemy(1)
-      io.println('market.thisIs', E.level, { type: typeName(E.type) })
+      io.println('market.thisIs', E.level, { type: typeRef(E.type) })
       await fight(6)
       W.denHelpQuest = 0
     }
@@ -583,7 +583,7 @@ export async function club(): Promise<void> {
         if (W.bet >= 17) {
           genEnemy(1)
           io.println('club.cheat')
-          io.println('market.thisIs', E.level, { type: typeName(E.type) })
+          io.println('market.thisIs', E.level, { type: typeRef(E.type) })
           io.println('club.expWin', W.district * 5)
           P.exp += W.district * 5
           levelUp(0)

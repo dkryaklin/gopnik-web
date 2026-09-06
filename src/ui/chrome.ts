@@ -1,28 +1,29 @@
 /** The little browser controls that live outside the DOS screen. */
 
-import { getLocale, setLocale, t, LOCALES, type Locale } from '../i18n'
+import { getLocale, onLocaleChange, setLocale, t, LOCALES, type Locale } from '../i18n'
+import { Picker } from './picker'
 
-export function mountChrome(root: HTMLElement, onRestart: () => void): void {
+export interface ChromeHost {
+  /** Start the game over from the top. */
+  onRestart: () => void
+  /** A control is finished with, and the game should have the keyboard back. */
+  onDone: () => void
+}
+
+export function mountChrome(root: HTMLElement, host: ChromeHost): void {
   const bar = document.createElement('div')
   bar.className = 'chrome'
 
   // Two languages fitted on a toggle; nine need a list.
-  const lang = document.createElement('select')
-  lang.className = 'lang'
-  for (const [code, name] of Object.entries(LOCALES)) {
-    const option = document.createElement('option')
-    option.value = code
-    option.textContent = name
-    lang.appendChild(option)
-  }
+  const lang = new Picker('lang',
+    Object.entries(LOCALES).map(([value, label]) => ({ value, label, lang: value })))
 
   const fullscreen = document.createElement('button')
   const restart = document.createElement('button')
 
   const paint = () => {
     lang.value = getLocale()
-    lang.title = t('ui.language')
-    lang.setAttribute('aria-label', t('ui.language'))
+    lang.setLabel(t('ui.language'))
     fullscreen.textContent = '⛶'
     fullscreen.title = t('ui.fullscreen')
     fullscreen.setAttribute('aria-label', t('ui.fullscreen'))
@@ -31,22 +32,23 @@ export function mountChrome(root: HTMLElement, onRestart: () => void): void {
     restart.setAttribute('aria-label', t('ui.restart'))
   }
 
-  lang.addEventListener('change', () => {
-    setLocale(lang.value as Locale)
-    paint()
-  })
+  lang.onChange = (value) => setLocale(value as Locale)
+  lang.onDone = host.onDone
+  onLocaleChange(paint)
 
   fullscreen.addEventListener('click', () => {
     if (document.fullscreenElement) void document.exitFullscreen()
     else void document.documentElement.requestFullscreen?.()
+    host.onDone()
   })
 
   restart.addEventListener('click', () => {
-    if (confirm(t('ui.restartConfirm'))) onRestart()
+    if (confirm(t('ui.restartConfirm'))) host.onRestart()
+    else host.onDone()
   })
 
   paint()
-  bar.append(lang, fullscreen, restart)
+  bar.append(lang.el, fullscreen, restart)
   root.appendChild(bar)
 }
 

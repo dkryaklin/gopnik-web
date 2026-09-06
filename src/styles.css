@@ -129,14 +129,18 @@ html, body {
   transform: translateX(-50%);
   font-size: 13px;
   letter-spacing: 1px;
-  color: var(--c8);
+  color: var(--c11);
   pointer-events: none;
   opacity: 0;
   transition: opacity .2s;
 }
 .hint.on { opacity: 1; animation: pulse 1.4s ease-in-out infinite; }
-@keyframes pulse { 0%, 100% { opacity: .35; } 50% { opacity: 1; } }
-@media (prefers-reduced-motion: reduce) { .hint.on { animation: none; opacity: .8; } }
+/* The pulse is in colour, not in opacity. This is the line that tells a player
+   on a phone how to carry on, and it used to spend half of every second faded
+   to a third of a mid grey - 1:1 on the screen behind it, which is not dim, it
+   is gone. Both ends of the pulse are DOS cyans: 7:1 and 17:1 on black. */
+@keyframes pulse { 0%, 100% { color: var(--c3); } 50% { color: var(--c11); } }
+@media (prefers-reduced-motion: reduce) { .hint.on { animation: none; } }
 
 .bar {
   flex: 0 0 auto;
@@ -161,7 +165,11 @@ html, body {
   font-size: 15px;
   color: var(--c11);
   background: #101010;
-  border: 1px solid #2a2a2a;
+  /* The key has no edge but this one - its face is the same black as the strip
+     it sits on - so the rule has to be one you can see. The dim DOS cyan is
+     7:1 on both, and it is the rule the controls above the screen are drawn
+     with, so the two sets of buttons read as the same kind of thing. */
+  border: 1px solid var(--c3);
   border-radius: 3px;
   cursor: pointer;
   touch-action: manipulation;
@@ -177,29 +185,92 @@ html, body {
   flex: 0 0 auto;
   width: 100%;
   display: flex;
+  align-items: center;
   justify-content: flex-end;
   gap: 6px;
   padding: 4px calc(6px + env(safe-area-inset-right)) 4px 6px;
 }
-.chrome button, .chrome select {
+/* Bright cyan on black, at full strength. These were dimmed to keep them out
+   of the way of the game, which is another way of saying they were hard to
+   see: #555 at half opacity is 1.3:1 on black, and the language picker was a
+   control most players never found. The DOS palette has a colour for exactly
+   this - the same cyan the on-screen keys are drawn in, 17:1 on black - so the
+   controls stay quiet by being small and off to one side instead. */
+.chrome button {
   /* Not the DOS face: it has no ideographs, and the language list names each
      language in its own script. */
   font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
   font-size: 13px;
-  padding: 4px 8px;
-  color: var(--c8);
-  background: transparent;
-  border: 1px solid #202020;
-  border-radius: 3px;
+  line-height: 1;
+  min-height: 32px;
+  min-width: 32px;
+  padding: 6px 8px;
+  color: var(--c11);
+  background: #000;
+  /* --c3 is the dim cyan of the DOS box rules: 7.3:1, which is a border you
+     can see rather than one you have to know is there. */
+  border: 1px solid var(--c3);
+  border-radius: 0;
   cursor: pointer;
-  opacity: .5;
-  transition: opacity .15s, color .15s;
+  transition: color .15s, border-color .15s, background .15s;
 }
-.chrome button:hover, .chrome button:focus-visible,
-.chrome select:hover, .chrome select:focus-visible { opacity: 1; color: var(--c15); }
-.chrome select { appearance: none; text-align: center; }
-.chrome select option { background: #000; color: var(--c7); }
-.chrome button[aria-pressed="true"] { color: var(--c14); opacity: 1; }
+.chrome button:hover, .chrome button:focus-visible {
+  color: var(--c15);
+  border-color: var(--c11);
+}
+.chrome button:focus-visible { outline: 2px solid var(--c11); outline-offset: 1px; }
+.chrome button:active { background: var(--c1); color: var(--c15); }
+.chrome button[aria-pressed="true"] { color: var(--c14); }
+
+/* The language picker: a DOS panel drawn where the browser would have drawn a
+   select, so the list opens in the game's own colours. */
+.pick { position: relative; }
+.pick-open { display: inline-flex; align-items: center; gap: 6px; }
+.pick-arrow { font-size: 9px; line-height: 1; }
+.pick-open[aria-expanded="true"] { color: var(--c15); border-color: var(--c11); }
+
+.pick-list {
+  position: absolute;
+  top: calc(100% + 2px);
+  right: 0;
+  z-index: 20;
+  margin: 0;
+  padding: 2px;
+  list-style: none;
+  min-width: 100%;
+  max-width: calc(100vw - 16px);
+  max-height: min(60vh, 420px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-size: 13px;
+  background: #000;
+  border: 1px solid var(--c11);
+}
+
+.pick-list li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 4px 10px 4px 6px;
+  color: var(--c15);
+  white-space: nowrap;
+  cursor: pointer;
+}
+/* The language now in use, told twice: a tick and the DOS yellow. */
+.pick-list li[aria-selected="true"] { color: var(--c14); }
+/* The row the cursor or the arrow keys are on, in inverse video, as a DOS
+   menu marks it. Black on this cyan is 17:1 either way round. */
+.pick-list li.on, .pick-list li.on[aria-selected="true"] {
+  background: var(--c11);
+  color: #000;
+}
+.pick-mark {
+  flex: 0 0 auto;
+  width: 1em;
+  text-align: center;
+}
 
 .sink {
   /* Kept inside the viewport, invisible: iOS only raises the on-screen

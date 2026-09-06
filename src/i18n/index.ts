@@ -1,3 +1,4 @@
+import { textWidth } from './width'
 import ru from './ru'
 import en from './en'
 import zh from './zh'
@@ -27,7 +28,26 @@ export const LOCALES = {
 
 export type Locale = keyof typeof LOCALES
 export type MsgKey = keyof typeof ru
-export type Vars = Record<string, string | number>
+
+/**
+ * A message used as a value inside another message — the enemy's type in the
+ * middle of a sentence about him, the word for a broken jaw after his health.
+ *
+ * It stays a key right up to the moment the line is written, so the line can
+ * be written again in another language and come back whole rather than with
+ * the words it was built out of still in the old one. `cells` pads the result
+ * out to a column of the 80-column screen, which is the one thing that cannot
+ * be done afterwards: the padding depends on how wide the word turned out.
+ */
+export interface Ref {
+  key: MsgKey
+  vars?: Vars
+  cells?: number
+}
+
+/** Anything a `{named}` slot can be filled with; a list is run together. */
+export type Value = string | number | Ref | Value[]
+export type Vars = Record<string, Value>
 
 /**
  * Only ru and en are guaranteed whole: the rest are translated one key at a
@@ -75,11 +95,23 @@ export function onLocaleChange(fn: (l: Locale) => void): void {
   listeners.add(fn)
 }
 
+/** Pads a value out to its column, not counting the colour codes it carries. */
+function pad(text: string, cells: number): string {
+  return text + ' '.repeat(Math.max(1, cells - textWidth(text.replace(/\^\d/g, ''))))
+}
+
+function fill(value: Value): string {
+  if (Array.isArray(value)) return value.map(fill).join('')
+  if (typeof value !== 'object') return String(value)
+  const text = t(value.key, value.vars)
+  return value.cells === undefined ? text : pad(text, value.cells)
+}
+
 /** Looks up a message and fills in its `{named}` placeholders. */
 export function t(key: MsgKey, vars?: Vars): string {
   const text = catalogs[locale][key] ?? en[key] ?? ru[key] ?? key
   if (!vars) return text
   return text.replace(/\{(\w+)\}/g, (whole, name: string) =>
-    name in vars ? String(vars[name]) : whole,
+    name in vars ? fill(vars[name]) : whole,
   )
 }
